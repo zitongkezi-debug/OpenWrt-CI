@@ -19,6 +19,9 @@ rm -rf feeds/luci/applications/luci-app-mosdns
 rm -rf feeds/luci/applications/luci-app-netdata
 rm -rf feeds/luci/applications/luci-app-serverchan
 
+# ====== 新增：移除有问题的 rpcd-mod-luci（解决 CMake 版本要求过高的问题） ======
+rm -rf feeds/luci/libs/rpcd-mod-luci
+
 # Git稀疏克隆函数
 function git_sparse_clone() {
   branch="$1" repourl="$2" && shift 2
