@@ -9,7 +9,7 @@ sed -i 's/192.168.1.1/192.168.2.1/g' package/base-files/files/bin/config_generat
 # TTYD 免登录（保持注释）
 # sed -i 's|/bin/login|/bin/login -f root|g' feeds/packages/utils/ttyd/files/ttyd.config
 
-# 移除要替换的包
+# 移除要替换的包（在 feeds 中删除）
 rm -rf feeds/packages/net/mosdns
 rm -rf feeds/packages/net/msd_lite
 rm -rf feeds/packages/net/smartdns
@@ -19,7 +19,11 @@ rm -rf feeds/luci/applications/luci-app-mosdns
 rm -rf feeds/luci/applications/luci-app-netdata
 rm -rf feeds/luci/applications/luci-app-serverchan
 
-# Git稀疏克隆函数（完整定义）
+# 移除有问题的 rpcd-mod-luci（同时在 feeds 和 package/feeds 中删除）
+rm -rf feeds/luci/libs/rpcd-mod-luci
+rm -rf package/feeds/luci/libs/rpcd-mod-luci   # 关键：删除编译实际使用的目录
+
+# Git稀疏克隆函数
 function git_sparse_clone() {
   branch="$1" repourl="$2" && shift 2
   git clone --depth=1 -b $branch --single-branch --filter=blob:none --sparse $repourl
@@ -121,8 +125,3 @@ find package/luci-theme-*/* -type f -name '*luci-theme-*' -print -exec sed -i '/
 # sed -i 's/services/vpn/g' feeds/luci/applications/luci-app-v2ray-server/luasrc/controller/*.lua
 # sed -i 's/services/vpn/g' feeds/luci/applications/luci-app-v2ray-server/luasrc/model/cbi/v2ray_server/*.lua
 # sed -i 's/services/vpn/g' feeds/luci/applications/luci-app-v2ray-server/luasrc/view/v2ray_server/*.htm
-
-# ===== 关键：先更新 feeds，再删除 rpcd-mod-luci，再安装 =====
-./scripts/feeds update -a
-rm -rf feeds/luci/libs/rpcd-mod-luci   # 必须在 update 之后执行
-./scripts/feeds install -a
